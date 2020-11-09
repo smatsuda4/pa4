@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CS4740 - CloudFront+SNS+Lambda+SNS+Dynamo Application</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.780.0.min.js"></script>
+    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+<body>
+<script type="text/javascript">
+
+function publish() {
+  // Initialize the Amazon Cognito credentials provider
+  AWS.config.region = 'us-east-1'; // Region
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'arn:aws:sns:us-east-1:487752119475:Pa4Topic',
+  });
+  // set up the sns client
+  var sns = new AWS.SNS();
+
+  // get the input value
+  var inputVal = document.getElementById("filler").value;
+  var params = {
+    Message: inputVal,
+    TopicArn: 'arn:aws:sns:us-east-1:487752119475:Pa4Topic'
+  };
+  sns.publish(params, function(err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else     console.log(data);           // successful response
+  });
+
+  var x = document.getElementById("publish");
+  var y = document.getElementById("thanks");
+  y.style.display = "block";              // show things after submission
+  x.style.display = "none";               // hide things after submission
+}
+</script>
+
+<div style="width:400px;margin:100px;border: solid 1px #ccc;padding:2rem;">
+  <div id="publish" class="form-group">
+    <h3>SNS Submission for PA4</h3>
+    <label for="filler">Submit a random string:</label>
+    <input class="form-control" type="text" style="font-size:16px;padding:4px;" id="filler" /> <br />
+    <button id="submit-button" onclick="publish()" class="btn btn-success">Send to SNS</button>
+  </div>
+  <div class="form-group" id="thanks" style="display:none;">
+    <h3>Thank you for submitting</h3>
+      <a href="/">Retry</a>
+  </div>
+</div>
+
+</body>
+</html>
